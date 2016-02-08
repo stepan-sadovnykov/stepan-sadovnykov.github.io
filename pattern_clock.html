@@ -1,0 +1,160 @@
+<html>
+	<head>
+		<style>
+			.hours {
+				transform: rotate(calc(2*365deg/5));
+			}
+
+			.hand div {
+				height: 5%;
+				width: 10px;
+				background-color: white;
+				position: absolute;
+				left: calc(50% - 5px);
+				border-radius: 50%;
+			}
+			div div.off {
+				box-shadow: inset 0 0 5px black;
+				opacity: 0.1;
+			}
+
+			.hand {
+				height: 100%;
+				position: absolute;
+				left: 50%;
+			}
+
+			.hours div {
+				top: 40%;
+				/*green light*/
+				box-shadow: 0 0 20px 5px red, inset 0 0 15px red;
+			}
+
+			.hours div.off {
+				background-color: red;
+			}
+
+			.minutes div {
+				top: 30%;
+				/*red light*/
+				box-shadow: 0 0 20px 5px lime, inset 0 0 15px lime;
+			}
+
+			.minutes div.off {
+				background-color: lime;
+			}
+
+			.seconds div {
+				top: 20%;
+				/*green light*/
+				box-shadow: 0 0 20px 5px deepskyblue, inset 0 0 15px deepskyblue;
+			}
+
+			.seconds div.off {
+				background-color: deepskyblue;
+			}
+		</style>
+		<script>
+			var hours, minutes, seconds;
+			var map24 = [
+				"00000", "00001", "00010", "00011", "00100", "00101", "00110", "00111",
+				"01000", "01001", "01010", "01011", "01100", "01101", "01110", "01111",
+				"10000", "10001", "10010", "10011", "10100", "10101", "10110", "10111",
+			];
+			var map60 = [
+				"000000", "000001", "000010", "000011", "000100", "000101", "000110", "000111",
+				"001000", "001001", "001010", "001011", "001100", "001101", "001110", "001111",
+				"010000", "010001", "010010", "010011", "010100", "010101", "010110", "010111",
+				"011000", "011001", "011010", "011011", "011100", "011101", "011110", "011111",
+				"100000", "100001", "100010", "100011", "100100", "100101", "100110", "100111",
+				"101000", "101001", "101010", "101011", "101100", "101101", "101110", "101111",
+				"110000", "110001", "110010", "110011", "110100", "110101", "110110", "110111",
+				"111000", "111001", "111010", "111011", "111100", "111101", "111110", "111111",
+			];
+			function tick() {
+				var now = new Date();
+				var i;
+				var bits;
+				bits = map60[now.getSeconds()].split('').reverse();
+				for (i = 0; i < seconds.length; i++) {
+					seconds[i].className = bits[i] == "1" ? "" : "off";
+				}
+
+				bits = map60[now.getMinutes()].split('').reverse();
+				for (i = 0; i < minutes.length; i++) {
+					minutes[i].className = bits[i] == "1" ? "" : "off";
+				}
+
+				bits = map24[now.getHours()].split('').reverse();
+				for (i = 0; i < hours.length; i++) {
+					hours[i].className = bits[i] == "1" ? "" : "off";
+				}
+			}
+
+			function onLoad() {
+				hours = document.getElementsByName("hours");
+				minutes = document.getElementsByName("minutes");
+				seconds = document.getElementsByName("seconds");
+
+				tick();
+				window.setInterval(tick, 1000);
+			}
+		</script>
+	</head>
+	<body style="background-color: black; margin: 0;" onload="onLoad()">
+		<div class="hand hours" style="transform: rotate(calc(0 * 360deg / 5));">
+			<div name="hours"></div>
+		</div>
+		<div class="hand hours" style="transform: rotate(calc(1 * 360deg / 5));">
+			<div name="hours"></div>
+		</div>
+		<div class="hand hours" style="transform: rotate(calc(2 * 360deg / 5));">
+			<div name="hours"></div>
+		</div>
+		<div class="hand hours" style="transform: rotate(calc(3 * 360deg / 5));">
+			<div name="hours"></div>
+		</div>
+		<div class="hand hours" style="transform: rotate(calc(4 * 360deg / 5));">
+			<div name="hours"></div>
+		</div>
+
+		<div class="hand minutes" style="transform: rotate(calc(0 * 360deg / 6));">
+			<div name="minutes"></div>
+		</div>
+		<div class="hand minutes" style="transform: rotate(calc(1 * 360deg / 6));">
+			<div name="minutes"></div>
+		</div>
+		<div class="hand minutes" style="transform: rotate(calc(2 * 360deg / 6));">
+			<div name="minutes"></div>
+		</div>
+		<div class="hand minutes" style="transform: rotate(calc(3 * 360deg / 6));">
+			<div name="minutes"></div>
+		</div>
+		<div class="hand minutes" style="transform: rotate(calc(4 * 360deg / 6));">
+			<div name="minutes"></div>
+		</div>
+		<div class="hand minutes" style="transform: rotate(calc(5 * 360deg / 6));">
+			<div name="minutes"></div>
+		</div>
+
+		<div class="hand seconds" style="transform: rotate(calc(0.5 * 360deg / 6));">
+			<div name="seconds"></div>
+		</div>
+		<div class="hand seconds" style="transform: rotate(calc(1.5 * 360deg / 6));">
+			<div name="seconds"></div>
+		</div>
+		<div class="hand seconds" style="transform: rotate(calc(2.5 * 360deg / 6));">
+			<div name="seconds"></div>
+		</div>
+		<div class="hand seconds" style="transform: rotate(calc(3.5 * 360deg / 6));">
+			<div name="seconds"></div>
+		</div>
+		<div class="hand seconds" style="transform: rotate(calc(4.5 * 360deg / 6));">
+			<div name="seconds"></div>
+		</div>
+		<div class="hand seconds" style="transform: rotate(calc(5.5 * 360deg / 6));">
+			<div name="seconds"></div>
+		</div>
+
+	</body>
+</html>
