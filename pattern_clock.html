@@ -53,38 +53,37 @@
 		<script>
 			var hours, minutes, seconds;
 			var hoursLedCount = 5, minutesLedCount = 6, secondsLedCount = 6;
-			var map24 = [
-				"00000", "00001", "00010", "00011", "00100", "00101", "00110", "00111",
-				"01000", "01001", "01010", "01011", "01100", "01101", "01110", "01111",
-				"10000", "10001", "10010", "10011", "10100", "10101", "10110", "10111",
-			];
-			var map60 = [
-				"000000", "000001", "000010", "000011", "000100", "000101", "000110", "000111",
-				"001000", "001001", "001010", "001011", "001100", "001101", "001110", "001111",
-				"010000", "010001", "010010", "010011", "010100", "010101", "010110", "010111",
-				"011000", "011001", "011010", "011011", "011100", "011101", "011110", "011111",
-				"100000", "100001", "100010", "100011", "100100", "100101", "100110", "100111",
-				"101000", "101001", "101010", "101011", "101100", "101101", "101110", "101111",
-				"110000", "110001", "110010", "110011", "110100", "110101", "110110", "110111",
-				"111000", "111001", "111010", "111011", "111100", "111101", "111110", "111111",
-			];
+			var map24 = createMap(5);
+			var map60 = createMap(6);
+			function createMap(positions) {
+				var result = [];
+				var i, j, item;
+				for (i = 0; i < 1 << positions; i++) {
+					item = [];
+					for (j = 0; j < positions; j++) {
+						item.push(((i >> j) & 1) ? "" : "off");
+					}
+					result.push(item);
+				}
+				return result;
+			}
 			function tick() {
 				var now = new Date();
 				var i;
 				var bits;
-				bits = map60[now.getSeconds()].split('').reverse();
+				bits = map60[now.getSeconds()];
 				for (i = 0; i < seconds.length; i++) {
-					seconds[i].className = bits[i] == "1" ? "" : "off";
+					seconds[i].className = bits[i];
 				}
 
-				bits = map60[now.getMinutes()].split('').reverse();
+				bits = map60[now.getMinutes()];
 				for (i = 0; i < minutes.length; i++) {
-					minutes[i].className = bits[i] == "1" ? "" : "off";
+					minutes[i].className = bits[i];
 				}
 
-				bits = map24[now.getHours()].split('').reverse();
+				bits = map24[now.getHours()];
 				for (i = 0; i < hours.length; i++) {
-					hours[i].className = bits[i] == "1" ? "" : "off";
+					hours[i].className = bits[i];
 				}
 			}
 
