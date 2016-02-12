@@ -1,10 +1,6 @@
 <html>
 	<head>
 		<style>
-			.hours {
-				transform: rotate(calc(2*365deg/5));
-			}
-
 			.hand div {
 				height: 5%;
 				width: 10px;
@@ -56,6 +52,7 @@
 		</style>
 		<script>
 			var hours, minutes, seconds;
+			var hoursLedCount = 5, minutesLedCount = 6, secondsLedCount = 6;
 			var map24 = [
 				"00000", "00001", "00010", "00011", "00100", "00101", "00110", "00111",
 				"01000", "01001", "01010", "01011", "01100", "01101", "01110", "01111",
@@ -91,7 +88,31 @@
 				}
 			}
 
+			function createHand(handType, number, count) {
+				var hand = document.createElement("div");
+				hand.className = "hand " + handType;
+				hand.style = `transform: rotate(${number * 360 / count}deg);`;
+
+				var handContents = document.createElement("div");
+				handContents.setAttribute("name", handType);
+				hand.appendChild(handContents);
+				document.body.appendChild(hand);
+			}
+			function createElements() {
+				var i;
+
+				for (i = 0; i < hoursLedCount; i++)
+					createHand("hours", i, hoursLedCount);
+
+				for (i = 0; i < minutesLedCount; i++)
+					createHand("minutes", i, minutesLedCount);
+
+				for (i = 0; i < secondsLedCount; i++)
+					createHand("seconds", i + 0.5, secondsLedCount);
+			}
+
 			function onLoad() {
+				createElements();
 				hours = document.getElementsByName("hours");
 				minutes = document.getElementsByName("minutes");
 				seconds = document.getElementsByName("seconds");
@@ -102,59 +123,5 @@
 		</script>
 	</head>
 	<body style="background-color: black; margin: 0;" onload="onLoad()">
-		<div class="hand hours" style="transform: rotate(calc(0 * 360deg / 5));">
-			<div name="hours"></div>
-		</div>
-		<div class="hand hours" style="transform: rotate(calc(1 * 360deg / 5));">
-			<div name="hours"></div>
-		</div>
-		<div class="hand hours" style="transform: rotate(calc(2 * 360deg / 5));">
-			<div name="hours"></div>
-		</div>
-		<div class="hand hours" style="transform: rotate(calc(3 * 360deg / 5));">
-			<div name="hours"></div>
-		</div>
-		<div class="hand hours" style="transform: rotate(calc(4 * 360deg / 5));">
-			<div name="hours"></div>
-		</div>
-
-		<div class="hand minutes" style="transform: rotate(calc(0 * 360deg / 6));">
-			<div name="minutes"></div>
-		</div>
-		<div class="hand minutes" style="transform: rotate(calc(1 * 360deg / 6));">
-			<div name="minutes"></div>
-		</div>
-		<div class="hand minutes" style="transform: rotate(calc(2 * 360deg / 6));">
-			<div name="minutes"></div>
-		</div>
-		<div class="hand minutes" style="transform: rotate(calc(3 * 360deg / 6));">
-			<div name="minutes"></div>
-		</div>
-		<div class="hand minutes" style="transform: rotate(calc(4 * 360deg / 6));">
-			<div name="minutes"></div>
-		</div>
-		<div class="hand minutes" style="transform: rotate(calc(5 * 360deg / 6));">
-			<div name="minutes"></div>
-		</div>
-
-		<div class="hand seconds" style="transform: rotate(calc(0.5 * 360deg / 6));">
-			<div name="seconds"></div>
-		</div>
-		<div class="hand seconds" style="transform: rotate(calc(1.5 * 360deg / 6));">
-			<div name="seconds"></div>
-		</div>
-		<div class="hand seconds" style="transform: rotate(calc(2.5 * 360deg / 6));">
-			<div name="seconds"></div>
-		</div>
-		<div class="hand seconds" style="transform: rotate(calc(3.5 * 360deg / 6));">
-			<div name="seconds"></div>
-		</div>
-		<div class="hand seconds" style="transform: rotate(calc(4.5 * 360deg / 6));">
-			<div name="seconds"></div>
-		</div>
-		<div class="hand seconds" style="transform: rotate(calc(5.5 * 360deg / 6));">
-			<div name="seconds"></div>
-		</div>
-
 	</body>
 </html>
