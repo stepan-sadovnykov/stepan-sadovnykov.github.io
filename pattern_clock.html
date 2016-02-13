@@ -1,6 +1,11 @@
 <html>
 	<head>
 		<style>
+			html {
+				position: fixed;
+				width: 100%;
+				height: 100%;
+			}
 			.hand div {
 				height: 5%;
 				width: 10px;
@@ -90,7 +95,7 @@
 			function createHand(handType, number, count) {
 				var hand = document.createElement("div");
 				hand.className = "hand " + handType;
-				hand.style = `transform: rotate(${number * 360 / count}deg);`;
+				hand.setAttribute("style", `transform: rotate(${number * 360 / count}deg);`);
 
 				var handContents = document.createElement("div");
 				handContents.setAttribute("name", handType);
