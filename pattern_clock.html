@@ -6,29 +6,37 @@
 				width: 100%;
 				height: 100%;
 			}
+			body {
+				height: 100vmin;
+				width: 100vmin;
+				margin-top: calc(50vh - 50vmin);
+				margin-left: calc(50vw - 50vmin);
+				background-color: black;
+				position: absolute;
+			}
 			.hand div {
-				height: 5%;
-				width: 10px;
+				height: 10vmin;
+				width: 2vmin;
 				background-color: white;
 				position: absolute;
-				left: calc(50% - 5px);
+				left: calc(50% - 1vmin);
 				border-radius: 50%;
 			}
 			div div.off {
-				box-shadow: inset 0 0 5px black;
+				box-shadow: inset 0 0 1vmin black;
 				opacity: 0.1;
 			}
 
 			.hand {
-				height: 100%;
+				height: 100vmin;
 				position: absolute;
-				left: 50%;
+				left: 50vmin;
 			}
 
 			.hours div {
-				top: 40%;
-				/*green light*/
-				box-shadow: 0 0 20px 5px red, inset 0 0 15px red;
+				top: 30vmin;
+				/*red light*/
+				box-shadow: 0 0 5vmin 1vmin red, inset 0 0 3vmin red;
 			}
 
 			.hours div.off {
@@ -36,9 +44,9 @@
 			}
 
 			.minutes div {
-				top: 30%;
-				/*red light*/
-				box-shadow: 0 0 20px 5px lime, inset 0 0 15px lime;
+				top: 15vmin;
+				/*green light*/
+				box-shadow: 0 0 5vmin 1vmin lime, inset 0 0 3vmin lime;
 			}
 
 			.minutes div.off {
@@ -46,9 +54,9 @@
 			}
 
 			.seconds div {
-				top: 20%;
-				/*green light*/
-				box-shadow: 0 0 20px 5px deepskyblue, inset 0 0 15px deepskyblue;
+				top: 0;
+				/*blue light*/
+				box-shadow: 0 0 5vmin 1vmin deepskyblue, inset 0 0 3vmin deepskyblue;
 			}
 
 			.seconds div.off {
@@ -126,6 +134,6 @@
 			}
 		</script>
 	</head>
-	<body style="background-color: black; margin: 0;" onload="onLoad()">
+	<body onload="onLoad()">
 	</body>
 </html>
