@@ -39,11 +39,28 @@
         div > div {
             margin-bottom: -6px;
         }
+/*
         div:nth-child(odd) > span:nth-child(odd) {
             border-color: black
         }
         div:nth-child(even) > span:nth-child(even) {
             border-color: black
+        }
+*/
+        .s0 {
+            border-left-color: black;
+        }
+        .s1 {
+            border-bottom-color: black;
+        }
+        .s2 {
+            border-right-color: black;
+        }
+        .s3 {
+            border-top-color: black;
+        }
+        .d0 {
+            background: none;
         }
         .d1 {
             background:
@@ -63,7 +80,7 @@
                     rgba(0,0,0,0) calc(50% + 1px),
                     rgba(0,0,0,0) 100%);
         }
-        span, .d3 {
+        .d3 {
             background:
                 linear-gradient(to top left,
                     rgba(0,0,0,0) 0%,
@@ -164,19 +181,6 @@
     </script>
 </head>
 <body onkeypress="return onKeyPress(event)" onload="return onLoad()">
-<div id="content"></div>
-
-<!--
-    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    -->
+    <div id="content"></div>
 </body>
 </html>
