@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Solid Script</title>
+    <style>
+        span {
+            border: solid 1px grey;
+            border-radius: 50%;
+            box-sizing: border-box;
+            display: inline-block;
+            margin-right: -6px;
+            height: 20px;
+            width: 20px;
+        }
+        div {
+            font-size: 0;
+            margin-bottom: -6px;
+            padding: 0;
+        }
+        div:nth-child(odd) > span:nth-child(odd) {
+            border-color: black
+        }
+        div:nth-child(even) > span:nth-child(even) {
+            border-color: black
+        }
+        .d1 {
+            background:
+                linear-gradient(to top right,
+                    rgba(0,0,0,0) 0%,
+                    rgba(0,0,0,0) calc(50% - 1px),
+                    rgba(0,0,0,1) 50%,
+                    rgba(0,0,0,0) calc(50% + 1px),
+                    rgba(0,0,0,0) 100%);
+        }
+        .d2 {
+            background:
+                linear-gradient(to top left,
+                    rgba(0,0,0,0) 0%,
+                    rgba(0,0,0,0) calc(50% - 1px),
+                    rgba(0,0,0,1) 50%,
+                    rgba(0,0,0,0) calc(50% + 1px),
+                    rgba(0,0,0,0) 100%);
+        }
+        span, .d3 {
+            background:
+                linear-gradient(to top left,
+                    rgba(0,0,0,0) 0%,
+                    rgba(0,0,0,0) calc(50% - 1px),
+                    rgba(0,0,0,1) 50%,
+                    rgba(0,0,0,0) calc(50% + 1px),
+                    rgba(0,0,0,0) 100%),
+                linear-gradient(to top right,
+                    rgba(0,0,0,0) 0%,
+                    rgba(0,0,0,0) calc(50% - 1px),
+                    rgba(0,0,0,1) 50%,
+                    rgba(0,0,0,0) calc(50% + 1px),
+                    rgba(0,0,0,0) 100%);
+        }
+    </style>
+    <script>
+        var content;
+        var cursor = 0;
+        var ring = 0;
+        var glyphs = [];
+        const Directions = Object.freeze({LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3});
+        class Glyph {
+            constructor(direction) {
+                this.pan = document.createElement("span");
+                this.handle = document.createElement("span");
+                this.direction = direction;
+                this.character = null;
+            }
+        } //{direction: DIRECTIONS.LEFT, pan: {}, handle: {}, character: ''};
+        function ensureGlyphs(count) {
+            if (glyphs.length < count) {
+                let topRow = document.createElement("div");
+                let bottomRow = document.createElement("div");
+                let lefts = [];
+
+                content.appendChild(bottomRow);
+                content.insertBefore(topRow, content.firstChild);
+                var rows = content.children;
+
+                for (let i=0; i<ring; i++) {
+                    let glyph = new Glyph(Directions.LEFT);
+                    glyphs.push(glyph);
+                    lefts.unshift(glyph);
+                }
+                for (let glyph of lefts) {
+                    bottomRow.appendChild(glyph.pan);
+                    bottomRow.appendChild(glyph.handle);
+                }
+
+                for (let i=0; i<ring + 1; i++) {
+                    let glyph = new Glyph(Directions.TOP);
+                    glyphs.push(glyph);
+
+                    let row = rows[rows.length - i*2 - 1];
+                    row.insertBefore(glyph.handle, row.firstChild);
+                    row = rows[rows.length - i*2 - 2];
+                    row.insertBefore(glyph.pan, row.firstChild);
+                }
+                for (let i=0; i<ring; i++) {
+                    let glyph = new Glyph(Directions.RIGHT);
+                    glyphs.push(glyph);
+                    topRow.appendChild(glyph.handle);
+                    topRow.appendChild(glyph.pan);
+                }
+                for (let i=0; i<ring + 1; i++) {
+                    let glyph = new Glyph(Directions.BOTTOM);
+                    glyphs.push(glyph);
+
+                    let row = rows[i*2];
+                    row.appendChild(glyph.handle);
+                    row = rows[i*2 + 1];
+                    row.appendChild(glyph.pan);
+                }
+                ring++;
+            }
+        }
+        function renderGlyph(glyph) {
+
+        }
+        function setGlyph(cursor, key) {
+            ensureGlyphs(cursor+1);
+            glyphs[cursor].character = key;
+            renderGlyph(glyphs[cursor])
+        }
+        function onKeyPress(event) {
+            let key = event.key;
+            setGlyph(cursor, key);
+            cursor++;
+        }
+
+        function onLoad() {
+            content = document.getElementById("content");
+        }
+
+        function getGlyphCount() {
+            return content.getElementsByTagName('span').length;
+        }
+    </script>
+</head>
+<body onkeypress="return onKeyPress(event)" onload="return onLoad()">
+<div id="content"></div>
+
+<!--
+    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    -->
+</body>
+</html>
