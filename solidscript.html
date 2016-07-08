@@ -39,14 +39,6 @@
         div > div {
             margin-bottom: -6px;
         }
-/*
-        div:nth-child(odd) > span:nth-child(odd) {
-            border-color: black
-        }
-        div:nth-child(even) > span:nth-child(even) {
-            border-color: black
-        }
-*/
         .s0 {
             border-left-color: black;
         }
@@ -102,35 +94,29 @@
         var ring = 0;
         var glyphs = [];
         const NA = null;
-        const Directions = Object.freeze({LEFT: 0, TOP: 1, RIGHT: 2, BOTTOM: 3});
+        const Directions = Object.freeze({TOP: 0, RIGHT: 1, BOTTOM: 2, LEFT: 3});
+        const Pan012Map = Object.freeze([0, 1, 2, 4, 3, 6, 5, 7]);
         const Chars = Object.freeze(
                 [//c=sh, y=shva, q=ng, x=voiced h
-                //    _,  s0,  s1,  s2, s01, s12, s02, s012]
-                    //no mods
-                    //+s3;
-                    //+handle d1
-                    //+handle d1+s3
-                    //+handle d2
-                    //+handle d2+s3
-                    //+handle d3
-                    //+handle d3+s3
-                    ' ', 'o', 'a', 'e',  NA,  NA, '(',  NA,
-                    ',', 'u', 'y', 'i',  NA,  NA, ')',  NA,
-                    ':', 'w', 'l', 'j',  NA, 'r', '[', '*',
-                    '-', 'm', 'n', 'q',  NA,  NA, ']', '+',
-                    ';', 'v', 'z', 'x',  NA,  NA, '<','\\',
-                    '.', 'b', 'd', 'g',  NA,  NA, '>', '/',
-                    '?', 'f', 's', 'h',  NA, 'c', '{', '_',
-                    '!', 'p', 't', 'k',  NA,  NA, '}', '^',
+                //    0,   1,   2,   4,   3,   6,   5,   7
+                //    _,  s0,  s1,  s2, s01, s12, s02, s012
+                    ' ', 'o', 'a', 'e',  NA,  NA, '(',  NA, //no mods
+                    ',', 'u', 'y', 'i',  NA,  NA, ')',  NA, //+s3;
+                    ':', 'w', 'l', 'j',  NA, 'r', '[', '*', //+handle d1
+                    '-', 'm', 'n', 'q',  NA,  NA, ']', '+', //+handle d1+s3
+                    ';', 'v', 'z', 'x',  NA,  NA, '<','\\', //+handle d2
+                    '.', 'b', 'd', 'g',  NA,  NA, '>', '/', //+handle d2+s3
+                    '?', 'f', 's', 'h',  NA, 'c', '{', '_', //+handle d3
+                    '!', 'p', 't', 'k',  NA,  NA, '}', '^', //+handle d3+s3
                 // +pan d1
-                    '~', 'O', 'A', 'E',  NA,  NA, '0', "1",
-                    '@', 'U', 'Y', 'I',  NA,  NA, '2', '3',
-                    '#', 'W', 'L', 'J',  NA, 'R', '4', '5',
-                    '=', 'M', 'N', 'Q',  NA,  NA, '6', '7',
-                    '$', 'V', 'Z', 'X',  NA,  NA, '8', '9',
-                    '%', 'B', 'D', 'G',  NA,  NA,  NA, "'",
-                    '|', 'F', 'S', 'H',  NA, 'C',  NA, '"',
-                    '&', 'P', 'T', 'K',  NA,  NA,  NA, '`',
+                    '~', 'O', 'A', 'E',  NA,  NA, '0', "1", //no mods
+                    '@', 'U', 'Y', 'I',  NA,  NA, '2', '3', //+s3;
+                    '#', 'W', 'L', 'J',  NA, 'R', '4', '5', //+handle d1
+                    '=', 'M', 'N', 'Q',  NA,  NA, '6', '7', //+handle d1+s3
+                    '$', 'V', 'Z', 'X',  NA,  NA, '8', '9', //+handle d2
+                    '%', 'B', 'D', 'G',  NA,  NA,  NA, "'", //+handle d2+s3
+                    '|', 'F', 'S', 'H',  NA, 'C',  NA, '"', //+handle d3
+                    '&', 'P', 'T', 'K',  NA,  NA,  NA, '`', //+handle d3+s3
                 //Not shown here:
                 // +pan d2
                 // +pan d3
@@ -191,8 +177,24 @@
                 ring++;
             }
         }
+        function rotate(bits, distance, bitLength) {
+            return ((bits | bits << bitLength) >> distance) & ((1 << bitLength) - 1);
+        }
         function renderGlyph(glyph) {
+            let code= Chars.indexOf(glyph.character);
+            let panSides = rotate(Pan012Map[code & 7] | (code & 0b00001000), glyph.direction, 4);
+            let handleDiagonals = rotate((code & 0b00110000) >> 4, glyph.direction & 1, 2);
+            let panDiagonals = rotate((code & 0b11000000) >> 6, glyph.direction & 1, 2);
+            let panStyle = [];
 
+            if (panSides & 0b0001) panStyle.push('s0');
+            if (panSides & 0b0010) panStyle.push('s1');
+            if (panSides & 0b0100) panStyle.push('s2');
+            if (panSides & 0b1000) panStyle.push('s3');
+            panStyle.push('d' + panDiagonals);
+
+            glyph.pan.className = panStyle.join(" ");
+            glyph.handle.className = 'd' + handleDiagonals;
         }
         function setGlyph(cursor, key) {
             ensureGlyphs(cursor+1);
