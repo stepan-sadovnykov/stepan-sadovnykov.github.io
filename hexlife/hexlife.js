@@ -74,7 +74,7 @@ function createCellView(field, x, y) {
                 var _x = direction * point[0] + x * cellDiameter + (isOddDiagonal ? cellDiameter : 0);
                 path += _x + "," + (point[1] + y * effectiveCellHeight) + " ";
             }
-            console.log(x + ", " + y + ": " + path);
+//            console.log(x + ", " + y + ": " + path);
             break;
     }
     item.setAttributeNS(null, "points", path);
