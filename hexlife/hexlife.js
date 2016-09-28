@@ -74,12 +74,39 @@ function createCellView(field, x, y) {
                 var _x = direction * point[0] + x * cellDiameter + (isOddDiagonal ? cellDiameter : 0);
                 path += _x + "," + (point[1] + y * effectiveCellHeight) + " ";
             }
-//            console.log(x + ", " + y + ": " + path);
             break;
     }
     item.setAttributeNS(null, "points", path);
     field.appendChild(item);
     return item;
+}
+
+//Cell functions
+function updateSum() {
+    var neighbour;
+    this.sum = 0;
+    for (neighbour of this.neighbours) {
+        this.sum += neighbour.state;
+    }
+}
+
+function updateState() {
+    this.state = this.state ? (this.sum == 2 || this.sum == 3) : (this.sum == 3);
+    this.view.setAttribute("state", this.state);
+}
+
+function cellUpdate() {
+    if (this.sum === undefined) {
+        this.updateSum();
+    } else {
+        this.updateState();
+        this.sum = undefined;
+    }
+}
+
+function cellOnClick() {
+    this.state = !this.state;
+    this.view.setAttribute("state", this.state);
 }
 
 function createCell(x, y) {
@@ -89,28 +116,10 @@ function createCell(x, y) {
     cell.view = createCellView(svgField, x, y);
     cell.neighbours = [];
 
-    cell.view.onclick = function() {
-        cell.state = !cell.state;
-        cell.view.setAttribute("state", cell.state);
-    };
-    cell.updateSum = function () {
-        cell.sum = 0;
-        for (var neighbour of cell.neighbours) {
-            cell.sum += neighbour.state;
-        }
-    };
-    cell.updateState = function () {
-        cell.state = cell.state ? (cell.sum == 2 || cell.sum == 3) : (cell.sum == 3);
-        cell.view.setAttribute("state", cell.state);
-    };
-    cell.update = function () {
-        if (cell.sum === undefined) {
-            cell.updateSum();
-        } else {
-            cell.updateState();
-            cell.sum = undefined;
-        }
-    };
+    cell.view.onclick = cellOnClick.bind(cell);
+    cell.updateSum = updateSum.bind(cell);
+    cell.updateState = updateState.bind(cell);
+    cell.update = cellUpdate.bind(cell);
     return cell;
 }
 
