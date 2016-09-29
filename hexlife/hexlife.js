@@ -102,12 +102,12 @@ let CREATE = 0b0000000001000;
 function updateState() {
     let sumMask = 1 << this.sum;
     this.state = !!(this.state ? (sumMask & KEEP) : (sumMask & CREATE));
-    this.view.setAttribute("state", this.state);
+    this.view.classList.toggle("true", this.state);
 }
 
 function cellOnClick() {
     this.state = !this.state;
-    this.view.setAttribute("state", this.state);
+    this.view.classList.toggle("true", this.state);
 }
 
 function createCell(x, y) {
