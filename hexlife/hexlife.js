@@ -33,7 +33,8 @@ function createCellView(field, x, y) {
     var item;
     var points;
     var path = "";
-    var point;
+    var point = {};
+    var i;
     item = document.createElementNS(svgUri, "polygon");
     switch (cellType) {
         case Tessellations.RECT:
@@ -44,7 +45,8 @@ function createCellView(field, x, y) {
                 [cellDiameter, effectiveCellHeight],
                 [0, effectiveCellHeight]
             ];
-            for (point of points) {
+            for (i = 0; i < points.length; i++) {
+                point = points[i];
                 path += (point[0] + effectiveX * cellDiameter) + "," + (point[1] + y * effectiveCellHeight) + " ";
             }
             break;
@@ -58,7 +60,8 @@ function createCellView(field, x, y) {
                 [0, effectiveCellHeight],
                 [0, cellSide / 2]
             ];
-            for (point of points) {
+            for (i = 0; i < points.length; i++) {
+                point = points[i];
                 path += (point[0] + effectiveX * cellDiameter) + "," + (point[1] + y * effectiveCellHeight) + " ";
             }
             break;
@@ -68,7 +71,8 @@ function createCellView(field, x, y) {
                 [cellDiameter, effectiveCellHeight],
                 [0, effectiveCellHeight * 2]
             ];
-            for (point of points) {
+            for (i = 0; i < points.length; i++) {
+                point = points[i];
                 var isOddDiagonal = (x + y) % 2;
                 var direction = isOddDiagonal ? -1 : 1;
                 var _x = direction * point[0] + x * cellDiameter + (isOddDiagonal ? cellDiameter : 0);
@@ -83,9 +87,11 @@ function createCellView(field, x, y) {
 
 //Cell functions
 function updateSum() {
-    var neighbour;
+    var neighbour = {};
+    var i;
     this.sum = 0;
-    for (neighbour of this.neighbours) {
+    for (i = 0; i < this.neighbours.length; i++) {
+        neighbour = this.neighbours[i];
         this.sum += neighbour.state;
     }
 }
@@ -93,15 +99,6 @@ function updateSum() {
 function updateState() {
     this.state = this.state ? (this.sum == 2 || this.sum == 3) : (this.sum == 3);
     this.view.setAttribute("state", this.state);
-}
-
-function cellUpdate() {
-    if (this.sum === undefined) {
-        this.updateSum();
-    } else {
-        this.updateState();
-        this.sum = undefined;
-    }
 }
 
 function cellOnClick() {
@@ -119,7 +116,6 @@ function createCell(x, y) {
     cell.view.onclick = cellOnClick.bind(cell);
     cell.updateSum = updateSum.bind(cell);
     cell.updateState = updateState.bind(cell);
-    cell.update = cellUpdate.bind(cell);
     return cell;
 }
 
@@ -162,7 +158,10 @@ var getNeighbours = function(grid, x, y) {
     var isOddDiagonal = (x + y) % 2;
     var isTriangular = cellType == Tessellations.TRIANGLE;
     var reflected = isOddDiagonal && isTriangular;
-    for (var d of displacements) {
+    var i;
+    var d;
+    for (i = 0; i < displacements.length; i++) {
+        d = displacements[i];
         var _x = mod(x + (reflected ? -1 : 1) * d[0], cellsX);
         var _y = mod(y + d[1], cellsY);
         if (!wrap && (_x != x + d[0] || _y != y + d[1]))
