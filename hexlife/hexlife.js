@@ -87,17 +87,21 @@ function createCellView(field, x, y) {
 
 //Cell functions
 function updateSum() {
-    var neighbour = {};
-    var i;
-    this.sum = 0;
-    for (i = 0; i < this.neighbours.length; i++) {
-        neighbour = this.neighbours[i];
-        this.sum += neighbour.state;
+    let sum = 0;
+    let neighbours = this.neighbours;
+    let i;
+    for (i = 0; i < neighbours.length; i++) {
+        sum += neighbours[i].state;
     }
+    this.sum = sum;
 }
 
+let KEEP   = 0b0000000001100;
+let CREATE = 0b0000000001000;
+
 function updateState() {
-    this.state = this.state ? (this.sum == 2 || this.sum == 3) : (this.sum == 3);
+    let sumMask = 1 << this.sum;
+    this.state = !!(this.state ? (sumMask & KEEP) : (sumMask & CREATE));
     this.view.setAttribute("state", this.state);
 }
 
