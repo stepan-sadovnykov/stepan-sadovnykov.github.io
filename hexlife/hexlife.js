@@ -103,12 +103,15 @@ function updateSum() {
 function updateState() {
     var sumMask = 1 << this.sum;
     this.state = !!(this.state ? (sumMask & keep) : (sumMask & create));
-    this.view.classList.toggle("true", this.state);
 }
 
 function cellOnClick() {
     this.state = !this.state;
-    this.view.classList.toggle("true", this.state);
+    this.updateCss();
+}
+
+function updateCellCss() {
+    this.view.classList.toggle("true", !!this.state);
 }
 
 function createCell(x, y) {
@@ -121,6 +124,7 @@ function createCell(x, y) {
     cell.view.onclick = cellOnClick.bind(cell);
     cell.updateSum = updateSum.bind(cell);
     cell.updateState = updateState.bind(cell);
+    cell.updateCss = updateCellCss.bind(cell);
     return cell;
 }
 
@@ -209,6 +213,11 @@ function update() {
     for (x = 0; x < cellsX; x++) {
         for (y = 0; y < cellsY; y++) {
             grid[x][y].updateState();
+        }
+    }
+    for (x = 0; x < cellsX; x++) {
+        for (y = 0; y < cellsY; y++) {
+            grid[x][y].updateCss();
         }
     }
 }
