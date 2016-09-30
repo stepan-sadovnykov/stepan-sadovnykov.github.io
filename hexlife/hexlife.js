@@ -21,6 +21,10 @@ var cellRadius = cellDiameter / 2;
 var grid = [];
 var timer;
 
+var keep   = 0b0000000001100;
+var create = 0b0000000001000;
+
+
 const Tessellations = {
     RECT: 0,
     HEX: 1,
@@ -87,21 +91,18 @@ function createCellView(field, x, y) {
 
 //Cell functions
 function updateSum() {
-    let sum = 0;
-    let neighbours = this.neighbours;
-    let i;
+    var sum = 0;
+    var neighbours = this.neighbours;
+    var i;
     for (i = 0; i < neighbours.length; i++) {
         sum += neighbours[i].state;
     }
     this.sum = sum;
 }
 
-let KEEP   = 0b0000000001100;
-let CREATE = 0b0000000001000;
-
 function updateState() {
-    let sumMask = 1 << this.sum;
-    this.state = !!(this.state ? (sumMask & KEEP) : (sumMask & CREATE));
+    var sumMask = 1 << this.sum;
+    this.state = !!(this.state ? (sumMask & keep) : (sumMask & create));
     this.view.classList.toggle("true", this.state);
 }
 
