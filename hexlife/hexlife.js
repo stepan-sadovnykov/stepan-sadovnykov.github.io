@@ -94,8 +94,8 @@ function updateSum() {
     var sum = 0;
     var neighbours = this.neighbours;
     var i;
-    for (i = 0; i < neighbours.length; i++) {
-        sum += neighbours[i].state;
+    for (i = 0; i < (neighbours.length|0); i++) {
+        sum += neighbours[i].state|0;
     }
     this.sum = sum;
 }
@@ -159,6 +159,8 @@ const Neighbourhoods ={
 };
 
 var getNeighbours = function(grid, x, y) {
+    x = x|0;
+    y = y|0;
     var result = [];
     var isOddDiagonal = (x + y) % 2;
     var isTriangular = cellType == Tessellations.TRIANGLE;
