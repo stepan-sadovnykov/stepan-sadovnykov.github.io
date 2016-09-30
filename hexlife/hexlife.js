@@ -31,13 +31,51 @@ const Tessellations = {
     TRIANGLE: 2
 };
 
+
+class Cell {
+    constructor(x, y) {
+        this.state = Math.random() < density;
+        this.sum = 0;
+        this.view = createCellView(svgField, x, y);
+        this.view.onclick = this.cellOnClick.bind(this);
+        this.neighbours = [];
+    }
+
+    updateSum() {
+        var sum = 0;
+        var neighbours = this.neighbours;
+        var i;
+        for (i = 0; i < (neighbours.length|0); i++) {
+            sum += neighbours[i].state|0;
+        }
+        this.sum = sum;
+    }
+
+    updateState() {
+        var sumMask = 1 << this.sum;
+        this.state = !!(this.state ? (sumMask & keep) : (sumMask & create));
+    }
+
+    updateCss() {
+        this.view.classList.toggle("true", !!this.state);
+    }
+
+    cellOnClick() {
+        this.state = !this.state;
+        this.updateCss();
+    }
+}
+
 function createCellView(field, x, y) {
+    x = x|0;
+    y = y|0;
+
     var svgUri = "http://www.w3.org/2000/svg";
     var effectiveX;
     var item;
     var points;
     var path = "";
-    var point = {};
+    var point;
     var i;
     item = document.createElementNS(svgUri, "polygon");
     switch (cellType) {
@@ -87,45 +125,6 @@ function createCellView(field, x, y) {
     item.setAttributeNS(null, "points", path);
     field.appendChild(item);
     return item;
-}
-
-//Cell functions
-function updateSum() {
-    var sum = 0;
-    var neighbours = this.neighbours;
-    var i;
-    for (i = 0; i < (neighbours.length|0); i++) {
-        sum += neighbours[i].state|0;
-    }
-    this.sum = sum;
-}
-
-function updateState() {
-    var sumMask = 1 << this.sum;
-    this.state = !!(this.state ? (sumMask & keep) : (sumMask & create));
-}
-
-function cellOnClick() {
-    this.state = !this.state;
-    this.updateCss();
-}
-
-function updateCellCss() {
-    this.view.classList.toggle("true", !!this.state);
-}
-
-function createCell(x, y) {
-    var cell = {};
-    cell.state = Math.random() < density;
-    cell.sum = undefined;
-    cell.view = createCellView(svgField, x, y);
-    cell.neighbours = [];
-
-    cell.view.onclick = cellOnClick.bind(cell);
-    cell.updateSum = updateSum.bind(cell);
-    cell.updateState = updateState.bind(cell);
-    cell.updateCss = updateCellCss.bind(cell);
-    return cell;
 }
 
 function mod(a, b) {
@@ -187,7 +186,7 @@ function initGrid() {
     for (x = 0; x < cellsX; x++) {
         grid[x] = [];
         for (y = 0; y < cellsY; y++) {
-            grid[x][y] = createCell(x, y);
+            grid[x][y] = new Cell(x, y);
         }
     }
 }
