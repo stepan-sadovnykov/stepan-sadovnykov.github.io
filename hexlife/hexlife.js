@@ -13,11 +13,13 @@ var cellType;
 var displacements;
 var wrap;
 
-var cellsX;
+var cellsX, semiCellsX;
 var cellsY;
 var cellSide;
 var effectiveCellHeight;
-var cellRadius = cellDiameter / 2;
+var shape;
+var getPath;
+var cellRadius = cellDiameter >> 1;
 var grid = [];
 var timer;
 
@@ -30,7 +32,6 @@ const Tessellations = {
     HEX: 1,
     TRIANGLE: 2
 };
-
 
 class Cell {
     constructor(x, y) {
@@ -66,63 +67,61 @@ class Cell {
     }
 }
 
+function getRectanglePath(x, y) {
+    x = x|0;
+    y = y|0;
+    var i;
+    var point;
+    var path = "";
+    for (i = 0; i < shape.length; i++) {
+        point = shape[i];
+        path += (point[0] + x * cellDiameter) + "," + (point[1] + y * effectiveCellHeight) + " ";
+    }
+    return path;
+}
+
+function getHexagonPath(x, y) {
+    x = x|0;
+    y = y|0;
+    var i;
+    var point;
+    var effectiveX = ((x << 1) + y) % semiCellsX;
+    var offsetX = effectiveX * cellRadius;
+    var offsetY = y * effectiveCellHeight;
+    var path = "";
+    for (i = 0; i < shape.length; i++) {
+        point = shape[i];
+        path += (point[0] + offsetX) + "," + (point[1] + offsetY) + " ";
+    }
+    return path;
+}
+
+function getTrianglePath(x, y) {
+    x = x|0;
+    y = y|0;
+    var i;
+    var point;
+    var path = "";
+    var isOddDiagonal = (x + y) % 2;
+    var direction = isOddDiagonal ? -1 : 1;
+    var offsetX = x * cellDiameter + (isOddDiagonal ? cellDiameter : 0);
+    var offsetY = y * effectiveCellHeight;
+    for (i = 0; i < shape.length; i++) {
+        point = shape[i];
+        var _x = direction * point[0] + offsetX;
+        path += _x + "," + (point[1] + offsetY) + " ";
+    }
+    return path;
+}
+
 function createCellView(field, x, y) {
     x = x|0;
     y = y|0;
 
     var svgUri = "http://www.w3.org/2000/svg";
-    var effectiveX;
     var item;
-    var points;
-    var path = "";
-    var point;
-    var i;
     item = document.createElementNS(svgUri, "polygon");
-    switch (cellType) {
-        case Tessellations.RECT:
-            effectiveX = x;
-            points = [
-                [0, 0],
-                [cellDiameter, 0],
-                [cellDiameter, effectiveCellHeight],
-                [0, effectiveCellHeight]
-            ];
-            for (i = 0; i < points.length; i++) {
-                point = points[i];
-                path += (point[0] + effectiveX * cellDiameter) + "," + (point[1] + y * effectiveCellHeight) + " ";
-            }
-            break;
-        case Tessellations.HEX:
-            effectiveX = (x + 0.5 * y) % cellsX;
-            points = [
-                [cellRadius, 0],
-                [cellDiameter, cellSide / 2],
-                [cellDiameter, effectiveCellHeight],
-                [cellRadius, cellSide * 2],
-                [0, effectiveCellHeight],
-                [0, cellSide / 2]
-            ];
-            for (i = 0; i < points.length; i++) {
-                point = points[i];
-                path += (point[0] + effectiveX * cellDiameter) + "," + (point[1] + y * effectiveCellHeight) + " ";
-            }
-            break;
-        case Tessellations.TRIANGLE:
-            points = [
-                [0, 0],
-                [cellDiameter, effectiveCellHeight],
-                [0, effectiveCellHeight * 2]
-            ];
-            for (i = 0; i < points.length; i++) {
-                point = points[i];
-                var isOddDiagonal = (x + y) % 2;
-                var direction = isOddDiagonal ? -1 : 1;
-                var _x = direction * point[0] + x * cellDiameter + (isOddDiagonal ? cellDiameter : 0);
-                path += _x + "," + (point[1] + y * effectiveCellHeight) + " ";
-            }
-            break;
-    }
-    item.setAttributeNS(null, "points", path);
+    item.setAttribute("points", getPath(x, y));
     field.appendChild(item);
     return item;
 }
@@ -280,19 +279,42 @@ function _start() {
 
     switch (cellType) {
         case Tessellations.RECT:
-            effectiveCellHeight = cellDiameter;
+            effectiveCellHeight = cellDiameter|0;
+            shape = [
+                [0, 0],
+                [cellDiameter, 0],
+                [cellDiameter, effectiveCellHeight],
+                [0, effectiveCellHeight]
+            ];
+            getPath = getRectanglePath;
             break;
         case Tessellations.HEX:
             cellSide = cellRadius / Math.sin(Math.PI / 3);
-            effectiveCellHeight = (cellSide * 3 / 2);
+            effectiveCellHeight = (cellSide * 3 / 2)|0;
+            shape = [
+                [cellRadius, 0],
+                [cellDiameter, cellSide / 2],
+                [cellDiameter, effectiveCellHeight],
+                [cellRadius, cellSide * 2],
+                [0, effectiveCellHeight],
+                [0, cellSide / 2]
+            ];
+            getPath = getHexagonPath;
             break;
         case Tessellations.TRIANGLE:
-            effectiveCellHeight = cellDiameter / Math.tan(Math.PI / 3);
+            effectiveCellHeight = (cellDiameter / Math.tan(Math.PI / 3))|0;
+            shape = [
+                [0, 0],
+                [cellDiameter, effectiveCellHeight],
+                [0, effectiveCellHeight * 2]
+            ];
+            getPath = getTrianglePath;
             break;
     }
 
-    cellsX = Math.floor(width / cellDiameter) - 1;
-    cellsY = Math.floor(height / effectiveCellHeight) - 1;
+    cellsX = (Math.floor(width / cellDiameter) - 1)|0;
+    semiCellsX = cellsX << 1;
+    cellsY = (Math.floor(height / effectiveCellHeight) - 1)|0;
 
     svgField.setAttribute("height", height + "px");
     svgField.setAttribute("width", width + "px");
